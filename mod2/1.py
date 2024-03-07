@@ -3,8 +3,9 @@ import os
 output_file_path = "output_file.txt"
 
 def get_summary_rss(file_path):
-    with open(file_path, "r") as f:
-        lines = f.readlines()[1:]
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    BOOK_FILE = os.path.join(BASE_DIR, file_path) 
+    lines = open(BOOK_FILE, "r", encoding='utf-8').readlines()[1:]
 
     total_rss_bytes = 0
     for line in lines:
