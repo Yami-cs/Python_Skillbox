@@ -4,19 +4,22 @@ def get_weekday_greeting(name):
     # Get the current weekday (0 = Monday, 6 = Sunday)
     weekday = datetime.today().weekday()
 
-    # Define the weekdays in Russian
+    # Define the weekdays in Russian with proper declensions
     weekdays = [
-        "понедельник",
-        "вторник",
-        "среду",
-        "четверг",
-        "пятницу",
-        "субботу",
-        "воскресенье"
+        "понедельника",
+        "вторника",
+        "среды",
+        "четверга",
+        "пятницы",
+        "субботы",
+        "воскресенья"
     ]
 
-    # Construct the greeting message
-    greeting = f"Привет, {name}. Хорошей {weekdays[weekday]}!"
+    if weekday in [0, 1, 3, 6]:
+        greeting = f"Хорошего {weekdays[weekday]}, {name}!"
+    else:
+        greeting = f"Хорошей {weekdays[weekday]}, {name}!"
+
     return greeting
 
 if __name__ == "__main__":
