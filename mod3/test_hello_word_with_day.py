@@ -30,3 +30,6 @@ class TestMaxNumberApp(unittest.TestCase):
         response = self.app.get(self.base_url + username)
         response_text = response.data.decode()
         self.assertTrue(weekday in response_text)
+
+if __name__ == "__main__":
+    unittest.main()
