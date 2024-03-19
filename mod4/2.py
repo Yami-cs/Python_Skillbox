@@ -1,12 +1,13 @@
-from wtforms import ValidationError
-from wtforms.validators import InputRequired
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import IntegerField
+from wtforms.validators import InputRequired, ValidationError
 
-def number_length(min_length, max_length, message=None):
-    def _number_length(form, field):
-        if not (min_length <= len(str(field.data)) <= max_length):
-            raise ValidationError(message or f"Поле должно содержать от {min_length} до {max_length} символов.")
-    return _number_length
+# Создаем Flask-приложение
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mysecretkey'  # Замените на свой секретный ключ
 
+# Валидатор для длины числа в виде класса
 class NumberLength:
     def __init__(self, min_length, max_length, message=None):
         self.min_length = min_length
@@ -14,13 +15,37 @@ class NumberLength:
         self.message = message
 
     def __call__(self, form, field):
-        if not (self.min_length <= len(str(field.data)) <= self.max_length):
-            raise ValidationError(self.message or f"Поле должно содержать от {self.min_length} до {self.max_length} символов.")
+        value = field.data
+        if value is not None:
+            value_str = str(value)
+            if len(value_str) < self.min_length or len(value_str) > self.max_length:
+                raise ValidationError(self.message or f"Number must be between {self.min_length} and {self.max_length} digits.")
 
-# Пример использования
-from flask_wtf import FlaskForm
-from wtforms import IntegerField
-
+# Создаем форму
 class MyForm(FlaskForm):
-    phone1 = IntegerField(validators=[InputRequired(), number_length(min_length=5, max_length=10)])
-    phone2 = IntegerField(validators=[InputRequired(), NumberLength(min_length=5, max_length=10)])
+    phone = IntegerField(validators=[InputRequired(), NumberLength(min_length=7, max_length=10, message="Invalid phone number")])
+
+# Роут для отображения формы
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = MyForm()
+    if form.validate_on_submit():
+        # Обработка данных формы
+        phone_number = form.phone.data
+        # Дополнительные действия с номером телефона
+        return f"Phone number submitted: {phone_number}"
+    return render_template('index.html', form=form)
+
+# Второй роут для другой реализации валидатора
+@app.route('/other', methods=['GET', 'POST'])
+def other():
+    form = MyForm()
+    if form.validate_on_submit():
+        # Обработка данных формы
+        phone_number = form.phone.data
+        # Дополнительные действия с номером телефона
+        return f"Phone number submitted (other route): {phone_number}"
+    return render_template('index.html', form=form)
+
+if __name__ == '__main__':
+    app.run(debug=True)
