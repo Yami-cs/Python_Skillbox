@@ -20,7 +20,7 @@ def my_t9(digits):
     regex = re.compile(pattern)
 
     # Открытие файла со словами
-    with open('words.txt', 'r') as f:
+    with open('/usr/share/dict/words', 'r') as f:
         # Фильтрация слов, которые соответствуют регулярному выражению
         words = [word.strip() for word in f if regex.fullmatch(word.strip().lower())]
 
