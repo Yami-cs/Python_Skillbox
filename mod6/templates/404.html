@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Not Found</title>
+</head>
+<body>
+    <h1>Page Not Found</h1>
+    <p>Sorry, but the page you were trying to view does not exist.</p>
+    <h2>Available Pages</h2>
+    <ul>
+    {% for route in routes %}
+        <li><a href="{{ route }}">{{ route }}</a></li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
