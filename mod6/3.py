@@ -1,22 +1,33 @@
 import logging
 import json
+from datetime import datetime
 
-class JsonAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
-        json_msg = json.dumps(msg, ensure_ascii=False)
-        return json_msg, kwargs
+# Создаем кастомный логгер
+logger = logging.getLogger(__name__)
 
-logger = JsonAdapter(logging.getLogger(__name__))
+# Создаем кастомный форматтер
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        # Создаем словарь с информацией о логе
+        log_data = {
+            "time": datetime.now().strftime("%H:%M:%S"),
+            "level": record.levelname,
+            "message": record.msg
+        }
+        # Преобразуем словарь в JSON-строку
+        return json.dumps(log_data)
 
-logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler('skillbox_json_messages.log')
-formatter = logging.Formatter('{"time": "%(asctime)s", "level": "%(levelname)s", "message": %(message)s}', datefmt='%H:%M:%S')
+# Создаем кастомный обработчик для записи логов в файл
+file_handler = logging.FileHandler("skillbox_json_messages.log")
+file_handler.setFormatter(JsonFormatter())
 
-file_handler.setFormatter(formatter)
+# Добавляем обработчик к логгеру
 logger.addHandler(file_handler)
 
-logger.info("Сообщение 1")
-logger.warning("Сообщение 2")
-logger.error("Сообщение 3")
+# Устанавливаем уровень логирования на INFO
+logger.setLevel(logging.INFO)
 
-file_handler.close()
+# Примеры лог-сообщений
+logger.info("Это информационное сообщение")
+logger.warning("Это предупреждение")
+logger.error("Это сообщение об ошибке")
